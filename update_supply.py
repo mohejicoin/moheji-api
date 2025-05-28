@@ -32,8 +32,4 @@ with open("moj-supply.json", "w") as f:
 
 print("✅ Updated moj-supply.json")
 
-with open("moj-supply.json", "w") as f:
-    json.dump(output, f, indent=2)
-
-print("✅ Updated moj-supply.json")
 
