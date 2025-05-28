@@ -10,7 +10,7 @@ TOKEN_ADDRESS = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
 api_key = os.getenv("HELIUS_API_KEY")
 
 # 残高取得エンドポイント（修正済み）
-url = f"https://api.helius.xyz/v0/token-metadata?api-key={api_key}"
+url = f"https://api.helius.xyz/v0/token-metadata?api-key={HELIUS_API_KEY}"
 
 # 残高確認用リクエストボディ
 body = {
