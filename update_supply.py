@@ -13,6 +13,7 @@ body = {
 }
 
 response = requests.post(url, json=body)
+response.raise_for_status()  # エラーがあれば例外発生
 data = response.json()
 
 decimals = int(data[0]["decimals"])
@@ -25,6 +26,11 @@ output = {
     "supply": supply,
     "last_updated": datetime.utcnow().isoformat() + "Z"
 }
+
+with open("moj-supply.json", "w") as f:
+    json.dump(output, f, indent=2)
+
+print("✅ Updated moj-supply.json")
 
 with open("moj-supply.json", "w") as f:
     json.dump(output, f, indent=2)
