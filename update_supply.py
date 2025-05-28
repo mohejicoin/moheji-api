@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 TOKEN_ADDRESS = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
-api_key = os.getenv("HELIUS_API_KEY")
+api_key = os.getenv("7c8afe86-b590-4fa8-8e49-99d0f751d63c")
 
 url = f"https://api.helius.xyz/v0/token-metadata?api-key={api_key}"
 
