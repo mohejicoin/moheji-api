@@ -12,6 +12,7 @@ HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
 # 残高取得エンドポイント
 url = f"https://api.helius.xyz/v0/token-metadata?api-key={api_key}"
 
+
 # 残高確認用リクエストボディ
 body = {
     "mintAccounts": [TOKEN_ADDRESS]
