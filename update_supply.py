@@ -11,13 +11,20 @@ body = {
     "mintAccounts": [TOKEN_ADDRESS]
 }
 
-response = requests.post(url, json=body)
-response.raise_for_status()
+try:
+    response = requests.post(url, json=body)
+    response.raise_for_status()
+except requests.RequestException as e:
+    print(f"API request failed: {e}")
+    raise
 
 data = response.json()
 
 if not data:
     raise ValueError("APIのレスポンスにトークンデータが含まれていません")
+
+if "decimals" not in data[0] or "supply" not in data[0]:
+    raise KeyError("APIレスポンスに 'decimals' または 'supply' キーが存在しません")
 
 decimals = int(data[0]["decimals"])
 raw_supply = int(data[0]["supply"])
@@ -34,4 +41,3 @@ with open("moj-supply.json", "w") as f:
     json.dump(output, f, indent=2)
 
 print("✅ Updated moj-supply.json")
-
