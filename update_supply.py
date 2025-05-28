@@ -1,7 +1,6 @@
 import requests
 import json
 from datetime import datetime
-import os
 
 TOKEN_ADDRESS = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
 api_key = "7c8afe86-b590-4fa8-8e49-99d0f751d63c"
@@ -13,8 +12,12 @@ body = {
 }
 
 response = requests.post(url, json=body)
-response.raise_for_status()  # エラーがあれば例外発生
+response.raise_for_status()
+
 data = response.json()
+
+if not data:
+    raise ValueError("APIのレスポンスにトークンデータが含まれていません")
 
 decimals = int(data[0]["decimals"])
 raw_supply = int(data[0]["supply"])
@@ -31,5 +34,4 @@ with open("moj-supply.json", "w") as f:
     json.dump(output, f, indent=2)
 
 print("✅ Updated moj-supply.json")
-
 
