@@ -1,23 +1,23 @@
 import requests
 import json
 from datetime import datetime
+import os
 
-# moheji（MOJ）のTokenアドレス（例：あなたのSolanaのTokenアドレスに変更）
+# moheji（MOJ）のTokenアドレス
 TOKEN_ADDRESS = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
 
 # 環境変数からHELIUSのAPIキーを取得
-import os
-HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
+api_key = os.getenv("HELIUS_API_KEY")
 
-# 残高取得エンドポイント
+# 残高取得エンドポイント（修正済み）
 url = f"https://api.helius.xyz/v0/token-metadata?api-key={api_key}"
-
 
 # 残高確認用リクエストボディ
 body = {
     "mintAccounts": [TOKEN_ADDRESS]
 }
 
+# POSTリクエスト送信
 response = requests.post(url, json=body)
 data = response.json()
 
@@ -37,4 +37,5 @@ output = {
 with open("moj-supply.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print("Updated moj-supply.json")
+print("✅ Updated moj-supply.json")
+
