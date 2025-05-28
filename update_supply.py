@@ -1,62 +1,48 @@
 import requests
 import json
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 
-# .envファイルから環境変数を読み込む（事前にpip install python-dotenv）
+# .envファイルの読み込み
 load_dotenv()
 
 # 環境変数からAPIキー取得
-api_key = os.getenv("7c8afe86-b590-4fa8-8e49-99d0f751d63c")
-if not api_key:
-    raise EnvironmentError("❌ 環境変数 'HELIUS_API_KEY' が設定されていません")
+HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
+if not HELIUS_API_KEY:
+    raise Exception("❌ HELIUS_API_KEY is not set in the .env file.")
 
 # MOJトークンのMintアドレス
-TOKEN_ADDRESS = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
+TOKEN_MINT = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
 
-# APIエンドポイント
-url = f"https://api.helius.xyz/v0/token-metadata?api-key={api_key}"
+# Helius RPC エンドポイント
+url = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
+headers = {"Content-Type": "application/json"}
 
-# リクエストボディ
-body = {
-    "mintAccounts": [TOKEN_ADDRESS]
+# getTokenSupplyリクエストペイロード
+payload = {
+    "jsonrpc": "2.0",
+    "id": "get-token-supply",
+    "method": "getTokenSupply",
+    "params": [TOKEN_MINT],
 }
 
-try:
-    response = requests.post(url, json=body)
-    response.raise_for_status()
-except requests.RequestException as e:
-    print(f"❌ APIリクエスト失敗: {e}")
-    raise
-
-# レスポンス取得
+# リクエスト送信
+response = requests.post(url, headers=headers, json=payload)
 data = response.json()
 
-if not data:
-    raise ValueError(f"❌ APIのレスポンスにトークンデータが含まれていません: {data}")
+# レスポンス処理
+if "result" in data and "value" in data["result"]:
+    supply_info = data["result"]["value"]
+    decimals = int(supply_info.get("decimals", 6))
+    ui_amount = float(supply_info.get("uiAmount", 0))
 
-token_data = data[0]
+    # JSONファイルに保存
+    with open("moj-supply.json", "w") as f:
+        json.dump({
+            "total_supply": round(ui_amount, decimals)
+        }, f, indent=2)
 
-if "decimals" not in token_data or "supply" not in token_data:
-    raise KeyError(f"❌ 'decimals' または 'supply' がレスポンスに含まれていません: {token_data}")
+    print("✅ Supply updated:", ui_amount)
 
-# 供給量の計算
-decimals = int(token_data["decimals"])
-raw_supply = int(token_data["supply"])
-supply = raw_supply / (10 ** decimals)
-
-# 出力データ
-output = {
-    "token": "moheji",
-    "symbol": "MOJ",
-    "supply": round(supply, 6),  # 小数点以下6桁に丸める
-    "last_updated": datetime.utcnow().isoformat() + "Z"
-}
-
-# JSONファイルとして保存
-with open("moj-supply.json", "w") as f:
-    json.dump(output, f, indent=2, ensure_ascii=False)
-
-print("✅ moj-supply.json を更新しました")
-
+else:
+    raise Exception("❌ Unexpected response format:\n" + json.dumps(data, indent=2))
