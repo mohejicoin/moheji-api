@@ -3,7 +3,6 @@ import json
 import os
 from dotenv import load_dotenv
 
-# .envから読み込み（ローカル用）
 if os.path.exists(".env"):
     load_dotenv()
 
@@ -20,7 +19,7 @@ payload = {
     "id": 1,
     "method": "getTokenSupply",
     "params": [
-        [TOKEN_MINT]
+        [TOKEN_MINT]  # ← 必ず2重リストにする
     ],
 }
 
@@ -39,20 +38,10 @@ data = response.json()
 try:
     supply_info = data["result"]["value"]
     ui_amount = float(supply_info.get("uiAmount", 0))
-except KeyError as e:
-    raise RuntimeError(
-        f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}"
-    ) from e
+    print("✅ Supply updated:", ui_amount)
 
-output_data = {
-    "name": "moheji",
-    "symbol": "MOJ",
-    "decimals": 6,
-    "total_supply": 1000000000,
-    "circulating_supply": ui_amount,
-    "burned_supply": 175506.628,
-    "last_updated": "2025-05-29T00:00:00Z",
-}
+except KeyError as e:
+    raise RuntimeError(f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}") from e
 
 with open("moj-supply.json", "w", encoding="utf-8") as f:
     json.dump(output_data, f, ensure_ascii=False, indent=2)
