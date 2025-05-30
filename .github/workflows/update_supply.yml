@@ -2,8 +2,12 @@ name: Update MOJ Supply JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'     # 毎時 0 分
+    - cron: '0 * * * *'     # 毎時 0 分（UTC）
   workflow_dispatch:        # 手動実行も可
+
+# ✅ github-actions に push 権限を明示
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -17,8 +21,6 @@ jobs:
         with:
           python-version: '3.x'
 
-      # python-dotenv はローカル専用だが、
-      # 入っていても邪魔にならないので一緒に入れておく
       - name: Install dependencies
         run: pip install requests python-dotenv
 
