@@ -1,33 +1,55 @@
+import requests
 import json
-from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-# 例: APIなどから取得した値（実際はAPIコールの結果を入れてください）
-total_supply = 1000000000
-circulating_supply = 999982249.372
-burned_supply = 175506.628
-last_updated = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+# ローカル環境なら .env を読み込み
+if os.path.exists(".env"):
+    load_dotenv()
 
-# 既存のファイルがあるなら読み込む（なければ初期データ作成）
+HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
+if not HELIUS_API_KEY:
+    raise Exception("❌ HELIUS_API_KEY is not set.")
+
+TOKEN_MINT = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
+url = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
+headers = {"Content-Type": "application/json"}
+
+payload = {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "getTokenSupply",
+    "params": [[TOKEN_MINT]],  # ← ここは配列の配列
+}
+
+response = requests.post(url, headers=headers, json=payload)
+
+if response.status_code != 200:
+    raise Exception(f"❌ HTTP error: {response.status_code} - {response.text}")
+
+data = response.json()
+
 try:
-    with open("moj-supply.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-except FileNotFoundError:
-    data = {
-        "name": "moheji",
-        "symbol": "MOJ",
-        "decimals": 6,
-    }
+    supply_info = data["result"]["value"]
+    ui_amount = float(supply_info.get("uiAmount", 0))
+except KeyError as e:
+    raise RuntimeError(
+        f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}"
+    ) from e
 
-# 値を更新
-data.update({
-    "total_supply": total_supply,
-    "circulating_supply": circulating_supply,
-    "burned_supply": burned_supply,
-    "last_updated": last_updated
-})
+# moj-supply.jsonに書き込み
+output_data = {
+    "name": "moheji",
+    "symbol": "MOJ",
+    "decimals": 6,
+    "total_supply": 1000000000,
+    "circulating_supply": ui_amount,  # 実際の流通供給量をAPIから取得した値に更新
+    "burned_supply": 175506.628,      # 必要に応じて手動で更新
+    "last_updated": "2025-05-29T00:00:00Z"  # ここは実行時刻に合わせて更新してもOK
+}
 
-# ファイルに書き込み
 with open("moj-supply.json", "w", encoding="utf-8") as f:
-    json.dump(data, f, indent=2, ensure_ascii=False)
+    json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-print("✅ moj-supply.json updated")
+print("✅ Supply JSONを更新しました。")
+
