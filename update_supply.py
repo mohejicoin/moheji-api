@@ -19,9 +19,8 @@ payload = {
     "jsonrpc": "2.0",
     "id": "get-token-supply",
     "method": "getTokenSupply",
-    "params": [[TOKEN_MINT]],  # 二重リストに変更
+    "params": [TOKEN_MINT],  # ここは1重のリストでOK
 }
-
 response = requests.post(url, headers=headers, json=payload)
 
 # エラーチェック
