@@ -19,7 +19,7 @@ payload = {
     "id": 1,
     "method": "getTokenSupply",
     "params": [
-        [TOKEN_MINT]  # ← 必ず2重リストにする
+        TOKEN_MINT  # ✅ 修正：二重リストではなく、1つの文字列をリストで渡す
     ],
 }
 
@@ -40,11 +40,17 @@ try:
     ui_amount = float(supply_info.get("uiAmount", 0))
     print("✅ Supply updated:", ui_amount)
 
+    # ここでJSONに保存
+    output_data = {
+        "mint": TOKEN_MINT,
+        "supply": ui_amount
+    }
+
+    with open("moj-supply.json", "w", encoding="utf-8") as f:
+        json.dump(output_data, f, ensure_ascii=False, indent=2)
+
+    print("✅ Supply JSONを更新しました。")
+
 except KeyError as e:
     raise RuntimeError(f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}") from e
-
-with open("moj-supply.json", "w", encoding="utf-8") as f:
-    json.dump(output_data, f, ensure_ascii=False, indent=2)
-
-print("✅ Supply JSONを更新しました。")
 
