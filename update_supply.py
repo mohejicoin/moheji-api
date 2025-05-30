@@ -17,9 +17,11 @@ headers = {"Content-Type": "application/json"}
 
 payload = {
     "jsonrpc": "2.0",
-    "id": "get-token-supply",
+    "id": 1,
     "method": "getTokenSupply",
-    "params": [TOKEN_MINT],
+    "params": {
+        "mint": TOKEN_MINT
+    }
 }
 
 response = requests.post(url, headers=headers, json=payload)
