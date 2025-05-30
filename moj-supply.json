@@ -1,9 +1,33 @@
-{
-  "name": "moheji",
-  "symbol": "MOJ",
-  "decimals": 6,
-  "total_supply": 1000000000,
-  "circulating_supply": 999982249.372,       
-  "burned_supply": 175506.628,                
-  "last_updated": "2025-05-29T00:00:00Z"
-}
+import json
+from datetime import datetime
+
+# 例: APIなどから取得した値（実際はAPIコールの結果を入れてください）
+total_supply = 1000000000
+circulating_supply = 999982249.372
+burned_supply = 175506.628
+last_updated = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+# 既存のファイルがあるなら読み込む（なければ初期データ作成）
+try:
+    with open("moj-supply.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+except FileNotFoundError:
+    data = {
+        "name": "moheji",
+        "symbol": "MOJ",
+        "decimals": 6,
+    }
+
+# 値を更新
+data.update({
+    "total_supply": total_supply,
+    "circulating_supply": circulating_supply,
+    "burned_supply": burned_supply,
+    "last_updated": last_updated
+})
+
+# ファイルに書き込み
+with open("moj-supply.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+
+print("✅ moj-supply.json updated")
