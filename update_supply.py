@@ -17,9 +17,9 @@ headers = {"Content-Type": "application/json"}
 
 payload = {
     "jsonrpc": "2.0",
-    "id": 1,
+    "id": "get-token-supply",
     "method": "getTokenSupply",
-    "params": [TOKEN_MINT]  # ← ここはリスト形式で正しい
+    "params": [[TOKEN_MINT]],  # 二重リストに変更
 }
 
 response = requests.post(url, headers=headers, json=payload)
