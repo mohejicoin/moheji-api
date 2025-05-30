@@ -3,7 +3,7 @@ name: Update MOJ Supply JSON
 on:
   schedule:
     - cron: '0 * * * *'  # 毎時0分に実行
-  workflow_dispatch:  # 手動実行も可
+  workflow_dispatch:  # 手動実行も可能
 
 jobs:
   update:
@@ -17,14 +17,13 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install requests
-        run: pip install requests
+      - name: Install dependencies
+        run: pip install requests python-dotenv
 
       - name: Run update script
         env:
           HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
-        run: |
-          python update_supply.py
+        run: python update_supply.py
 
       - name: Commit and push updated moj-supply.json
         run: |
