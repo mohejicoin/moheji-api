@@ -3,7 +3,6 @@ import json
 import os
 from dotenv import load_dotenv
 
-# .envから読み込み
 if os.path.exists(".env"):
     load_dotenv()
 
@@ -19,17 +18,18 @@ payload = {
     "jsonrpc": "2.0",
     "id": "get-token-supply",
     "method": "getTokenSupply",
-    "params": [TOKEN_MINT],  # ここは1重のリストでOK
+    "params": [[TOKEN_MINT]],  # 配列の配列にしてみる
 }
+
+print("Sending payload:", json.dumps(payload))
+
 response = requests.post(url, headers=headers, json=payload)
 
-# エラーチェック
 if response.status_code != 200:
     raise Exception(f"❌ HTTP error: {response.status_code} - {response.text}")
 
 data = response.json()
 
-# 正常データかチェック
 try:
     supply_info = data["result"]["value"]
     ui_amount = float(supply_info.get("uiAmount", 0))
@@ -40,5 +40,7 @@ try:
     print("✅ Supply updated:", ui_amount)
 
 except KeyError as e:
-    raise RuntimeError(f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}") from e
+    raise RuntimeError(
+        f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}"
+    ) from e
 
