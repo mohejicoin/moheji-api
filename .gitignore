@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -140,6 +139,3 @@ Thumbs.db
 
 # PyPI configuration file
 .pypirc
-=======
-
->>>>>>> dcfddc7 (Add .gitignore)
