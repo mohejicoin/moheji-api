@@ -1,70 +1,45 @@
-#!/usr/bin/env python3
-"""
-MOJ サプライ情報を Helius RPC から取得し、
-moj-supply.json を自動生成・更新するスクリプト
-"""
-
+import requests
 import json
 import os
-from datetime import datetime, timezone
+from dotenv import load_dotenv
 
-import requests
-
-# ───────────────────────────────────────────────
-# .env があればローカル開発用に読み込む（CI では不要）
-try:
-    from dotenv import load_dotenv  # type: ignore
-    if os.path.exists(".env"):
-        load_dotenv()
-except ModuleNotFoundError:
-    # python-dotenv が無くても CI では動くので無視
-    pass
-# ───────────────────────────────────────────────
+# .envから読み込み
+if os.path.exists(".env"):
+    load_dotenv()
 
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
 if not HELIUS_API_KEY:
-    raise EnvironmentError("❌ HELIUS_API_KEY が環境変数に設定されていません。")
+    raise Exception("❌ HELIUS_API_KEY is not set.")
 
 TOKEN_MINT = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
-RPC_URL = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
-HEADERS = {"Content-Type": "application/json"}
+url = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
+headers = {"Content-Type": "application/json"}
 
 payload = {
     "jsonrpc": "2.0",
     "id": 1,
     "method": "getTokenSupply",
-    "params": {
-        "mint": TOKEN_MINT
-    }
+    "params": [TOKEN_MINT]  # ← ここはリスト形式で正しい
 }
 
-resp = requests.post(RPC_URL, headers=HEADERS, json=payload, timeout=30)
-resp.raise_for_status()                # HTTP エラーなら例外
+response = requests.post(url, headers=headers, json=payload)
 
-data = resp.json()
+# エラーチェック
+if response.status_code != 200:
+    raise Exception(f"❌ HTTP error: {response.status_code} - {response.text}")
 
-# ─── レスポンス検証 ──────────────────────────────
+data = response.json()
+
+# 正常データかチェック
 try:
-    supply = data["result"]["value"]
-    amount_ui = float(supply["uiAmount"])
-    decimals = int(supply["decimals"])
-except (KeyError, TypeError, ValueError) as e:
-    raise RuntimeError(
-        "❌ 取得したレスポンス形式が予想と異なります。\n"
-        f"Response: {json.dumps(data, indent=2, ensure_ascii=False)}"
-    ) from e
-# ───────────────────────────────────────────────
+    supply_info = data["result"]["value"]
+    ui_amount = float(supply_info.get("uiAmount", 0))
 
-# 例：ここでは総供給量のみ保存（必要に応じて項目を増やせます）
-out = {
-    "name":        "moheji",
-    "symbol":      "MOJ",
-    "decimals":    decimals,
-    "total_supply": amount_ui,
-    "last_updated": datetime.now(timezone.utc).isoformat(timespec="seconds")
-}
+    with open("moj-supply.json", "w") as f:
+        json.dump({"total_supply": ui_amount}, f, indent=2)
 
-with open("moj-supply.json", "w", encoding="utf-8") as fp:
-    json.dump(out, fp, indent=2, ensure_ascii=False)
+    print("✅ Supply updated:", ui_amount)
 
-print("✅ moj-supply.json を更新しました:", out["total_supply"])
+except KeyError as e:
+    raise RuntimeError(f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}") from e
+
