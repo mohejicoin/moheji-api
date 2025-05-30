@@ -3,6 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 
+# .env 読み込み
 if os.path.exists(".env"):
     load_dotenv()
 
@@ -19,38 +20,47 @@ payload = {
     "id": 1,
     "method": "getTokenSupply",
     "params": [
-        TOKEN_MINT  # ✅ 修正：二重リストではなく、1つの文字列をリストで渡す
+        TOKEN_MINT
     ],
 }
 
 print("Request payload:", json.dumps(payload, indent=2))
 
-response = requests.post(url, headers=headers, json=payload)
-
-print("Response status code:", response.status_code)
-print("Response content:", response.text)
+# API リクエスト送信
+try:
+    response = requests.post(url, headers=headers, json=payload)
+    print("Response status code:", response.status_code)
+    print("Response content:", response.text)
+except requests.RequestException as e:
+    raise RuntimeError(f"❌ リクエストエラー: {e}")
 
 if response.status_code != 200:
     raise Exception(f"❌ HTTP error: {response.status_code} - {response.text}")
 
-data = response.json()
-
+# レスポンス処理
 try:
-    supply_info = data["result"]["value"]
+    data = response.json()
+
+    result = data.get("result")
+    if not result or "value" not in result:
+        raise KeyError("❌ 'result.value' がレスポンスに存在しません。")
+
+    supply_info = result["value"]
     ui_amount = float(supply_info.get("uiAmount", 0))
     print("✅ Supply updated:", ui_amount)
 
-    # ここでJSONに保存
     output_data = {
         "mint": TOKEN_MINT,
         "supply": ui_amount
     }
 
-    with open("moj-supply.json", "w", encoding="utf-8") as f:
-        json.dump(output_data, f, ensure_ascii=False, indent=2)
+    try:
+        with open("moj-supply.json", "w", encoding="utf-8") as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
+        print("✅ Supply JSONを更新しました。")
+    except Exception as e:
+        print("❌ JSON保存中にエラーが発生しました:", e)
 
-    print("✅ Supply JSONを更新しました。")
-
-except KeyError as e:
-    raise RuntimeError(f"❌ 取得したレスポンス形式が予想と異なります。\nResponse: {json.dumps(data, indent=2)}") from e
+except (KeyError, ValueError, json.JSONDecodeError) as e:
+    raise RuntimeError(f"❌ レスポンスの解析中にエラーが発生しました。\nResponse: {json.dumps(data, indent=2)}") from e
 
