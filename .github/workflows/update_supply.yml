@@ -2,10 +2,9 @@ name: Update MOJ Supply JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'     # 毎時 0 分（UTC）
-  workflow_dispatch:        # 手動実行も可
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
-# ✅ github-actions に push 権限を明示
 permissions:
   contents: write
 
@@ -35,4 +34,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add moj-supply.json
           git commit -m "Update moj-supply.json [skip ci]" || echo "No changes to commit"
+          git pull --rebase
           git push
