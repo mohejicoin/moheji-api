@@ -19,7 +19,9 @@ payload = {
     "jsonrpc": "2.0",
     "id": 1,
     "method": "getTokenSupply",
-    "params": [TOKEN_MINT],  # ★ここは必ず配列（リスト）で
+    "params": [
+        [TOKEN_MINT]
+    ],
 }
 
 print("Request payload:", json.dumps(payload, indent=2))
