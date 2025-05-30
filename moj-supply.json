@@ -3,7 +3,7 @@
   "symbol": "MOJ",
   "decimals": 6,
   "total_supply": 1000000000,
-  "circulating_supply": 999982249.372,       // 例：実際の流通量に合わせて調整
-  "burned_supply": 175506.628,                // total - circulating と一致させる
+  "circulating_supply": 999982249.372,       
+  "burned_supply": 175506.628,                
   "last_updated": "2025-05-29T00:00:00Z"
 }
