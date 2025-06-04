@@ -2,7 +2,7 @@ name: Update MOJ Supply JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 * * * *'  # Run at minute 0 of every hour
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests python-dotenv
+        run: pip install requests  # python-dotenv not needed in Actions
 
       - name: Run update script
         env:
@@ -34,5 +34,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add moj-supply.json
           git commit -m "Update moj-supply.json [skip ci]" || echo "No changes to commit"
-          git pull --rebase
           git push
