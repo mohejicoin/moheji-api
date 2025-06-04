@@ -3,10 +3,10 @@ import json
 import os
 from dotenv import load_dotenv
 
-# .env 読み込み
-if os.path.exists(".env"):
-    load_dotenv()
+# ローカル実行用に .env から環境変数を読み込む
+load_dotenv()
 
+# GitHub Actions でも環境変数 HELIUS_API_KEY を取得
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
 if not HELIUS_API_KEY:
     raise Exception("❌ HELIUS_API_KEY is not set.")
@@ -19,48 +19,34 @@ payload = {
     "jsonrpc": "2.0",
     "id": 1,
     "method": "getTokenSupply",
-    "params": [
-        TOKEN_MINT
-    ],
+    "params": [TOKEN_MINT],
 }
 
-print("Request payload:", json.dumps(payload, indent=2))
+print("📡 Sending request to Helius RPC...")
 
-# API リクエスト送信
 try:
     response = requests.post(url, headers=headers, json=payload)
-    print("Response status code:", response.status_code)
-    print("Response content:", response.text)
-except requests.RequestException as e:
-    raise RuntimeError(f"❌ リクエストエラー: {e}")
-
-if response.status_code != 200:
-    raise Exception(f"❌ HTTP error: {response.status_code} - {response.text}")
-
-# レスポンス処理
-try:
+    response.raise_for_status()
     data = response.json()
+    supply_value = data.get("result", {}).get("value", {}).get("uiAmount")
+    if supply_value is None:
+        raise KeyError("❌ 'uiAmount' not found in response.")
+    supply = float(supply_value)
+    print(f"✅ Current Supply: {supply}")
 
-    result = data.get("result")
-    if not result or "value" not in result:
-        raise KeyError("❌ 'result.value' がレスポンスに存在しません。")
-
-    supply_info = result["value"]
-    ui_amount = float(supply_info.get("uiAmount", 0))
-    print("✅ Supply updated:", ui_amount)
-
+    # JSONファイルに出力
     output_data = {
         "mint": TOKEN_MINT,
-        "supply": ui_amount
+        "supply": supply
     }
+    with open("moj-supply.json", "w", encoding="utf-8") as f:
+        json.dump(output_data, f, ensure_ascii=False, indent=2)
+    print("✅ moj-supply.json を更新しました。")
 
-    try:
-        with open("moj-supply.json", "w", encoding="utf-8") as f:
-            json.dump(output_data, f, ensure_ascii=False, indent=2)
-        print("✅ Supply JSONを更新しました。")
-    except Exception as e:
-        print("❌ JSON保存中にエラーが発生しました:", e)
-
+except requests.RequestException as e:
+    print(f"❌ Request error: {e}")
+    exit(1)
 except (KeyError, ValueError, json.JSONDecodeError) as e:
-    raise RuntimeError(f"❌ レスポンスの解析中にエラーが発生しました。\nResponse: {json.dumps(data, indent=2)}") from e
+    print(f"❌ Response parsing error: {e}\nResponse content: {response.text}")
+    exit(1)
 
