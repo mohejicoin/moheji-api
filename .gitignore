@@ -131,7 +131,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# OSごとの不要ファイル
+# Unnecessary files for each OS
 .DS_Store
 Thumbs.db
 # Ruff stuff:
