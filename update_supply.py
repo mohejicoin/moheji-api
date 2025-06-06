@@ -3,10 +3,10 @@ import json
 import os
 from dotenv import load_dotenv
 
-# ローカル実行用に .env から環境変数を読み込む
+# Loading environment variables from .env for local runs
 load_dotenv()
 
-# GitHub Actions でも環境変数 HELIUS_API_KEY を取得
+# GitHub Actions also gets the environment variable HELIUS_API_KEY
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
 if not HELIUS_API_KEY:
     raise Exception("❌ HELIUS_API_KEY is not set.")
@@ -34,14 +34,14 @@ try:
     supply = float(supply_value)
     print(f"✅ Current Supply: {supply}")
 
-    # JSONファイルに出力
+    # Output to JSON file
     output_data = {
         "mint": TOKEN_MINT,
         "supply": supply
     }
     with open("moj-supply.json", "w", encoding="utf-8") as f:
         json.dump(output_data, f, ensure_ascii=False, indent=2)
-    print("✅ moj-supply.json を更新しました。")
+    print("✅ moj-supply.json has been updated.")
 
 except requests.RequestException as e:
     print(f"❌ Request error: {e}")
