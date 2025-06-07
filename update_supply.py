@@ -3,18 +3,18 @@ import json
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
+# 環境変数読み込み
 load_dotenv()
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
 TOKEN_MINT = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
 
-# 初期供給量を固定（バーン前の総供給量）
+# 初期供給量（バーン前の総供給量）
 INITIAL_SUPPLY = 1_000_000_000.0
 
 if not HELIUS_API_KEY:
     raise Exception("❌ HELIUS_API_KEY is not set.")
 
-# Helius APIから現在の供給量を取得
+# Helius APIのエンドポイントとヘッダー
 url = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
 headers = {"Content-Type": "application/json"}
 payload = {
@@ -30,10 +30,10 @@ response.raise_for_status()
 data = response.json()
 current_supply = data["result"]["value"]["uiAmount"]
 
-# バーンされた量を計算
+# バーン量を計算
 burned = round(INITIAL_SUPPLY - current_supply, 6)
 
-# 固定配分
+# 固定配分計算
 allocations = {
     "Developer Lock": round(INITIAL_SUPPLY * 0.10, 6),
     "Operational Reserve": round(INITIAL_SUPPLY * 0.15, 6),
@@ -43,15 +43,16 @@ allocations = {
     "Community": round(INITIAL_SUPPLY * 0.50, 6),
 }
 
-# 結果を保存
+# 結果を辞書でまとめる
 result = {
     "mint": TOKEN_MINT,
     "initial_supply": INITIAL_SUPPLY,
     "current_supply": current_supply,
     "burned": burned,
-    "allocations": allocations
+    "allocations": allocations,
 }
 
+# JSONファイルに書き込み
 with open("moj-final-allocation.json", "w") as f:
     json.dump(result, f, indent=2)
 
