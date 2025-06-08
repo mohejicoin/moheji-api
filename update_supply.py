@@ -57,8 +57,8 @@ result = {
     "allocations": allocations
 }
 
-# JSON書き出し
-with open("allocation_result.json", "w") as f:
+# JSON書き出し（新ファイル名）
+with open("moj-final-allocation.json", "w") as f:
     json.dump(result, f, indent=2)
 
-print("✅ allocation_result.json has been created.")
+print("✅ moj-final-allocation.json has been created.")
