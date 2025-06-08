@@ -2,7 +2,7 @@ name: Update MOJ Supply JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Run every hour
+    - cron: '0 * * * *'  # 毎時0分に実行
   workflow_dispatch:
 
 permissions:
@@ -33,7 +33,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
-          git add moj-supply.json allocation_result.json
+          git fetch origin main
+          git rebase origin/main
+          git add moj-supply.json allocation_result.json moj-final-allocation.json
           git commit -m "Update supply and allocation JSON [skip ci]" || echo "No changes to commit"
-          git push
+          git push origin main
