@@ -40,7 +40,7 @@ allocations = {
     "Marketing and Partnerships": round(INITIAL_SUPPLY * 0.10, 6),
     "Ecosystem Rewards": round(INITIAL_SUPPLY * 0.10, 6),
     "Burn Slot": burned,
-    "Community": round(INITIAL_SUPPLY * 0.55, 6),
+    "Community": round(INITIAL_SUPPLY * 0.50, 6),
 }
 
 # 結果を辞書でまとめる
