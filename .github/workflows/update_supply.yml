@@ -36,7 +36,6 @@ jobs:
           git fetch origin main
           git rebase origin/main
           if [ -f moj-supply.json ]; then git add moj-supply.json; fi
-          if [ -f allocation_result.json ]; then git add allocation_result.json; fi
           if [ -f moj-final-allocation.json ]; then git add moj-final-allocation.json; fi
           git commit -m "Update supply and allocation JSON [skip ci]" || echo "No changes to commit"
           git push origin main
