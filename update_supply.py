@@ -33,14 +33,14 @@ current_supply = data["result"]["value"]["uiAmount"]
 # バーン量を計算
 burned = round(INITIAL_SUPPLY - current_supply, 6)
 
-# 固定配分計算
+# 固定配分計算（初期供給量ベース）
 allocations = {
     "Developer Lock": round(INITIAL_SUPPLY * 0.10, 6),
     "Operational Reserve": round(INITIAL_SUPPLY * 0.15, 6),
     "Marketing and Partnerships": round(INITIAL_SUPPLY * 0.10, 6),
     "Ecosystem Rewards": round(INITIAL_SUPPLY * 0.10, 6),
-    "Burn Slot": burned,
     "Community": round(INITIAL_SUPPLY * 0.50, 6),
+    "Burn Slot": burned,  # 実際のバーン量
 }
 
 # 結果を辞書でまとめる
