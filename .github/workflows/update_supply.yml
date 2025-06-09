@@ -41,3 +41,4 @@ jobs:
           if [ -f moj-final-allocation.json ]; then git add moj-final-allocation.json; fi
           git commit -m "Update supply and allocation JSON [skip ci]" || echo "No changes to commit"
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
+          
