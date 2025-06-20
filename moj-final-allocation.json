@@ -1,8 +1,8 @@
 {
   "mint": "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump",
   "initial_supply": 1000000000.0,
-  "current_supply": 999184790.764182,
-  "burned": 815209.235818,
+  "current_supply": 999184790.764181,
+  "burned": 815209.235819,
   "allocations": {
     "Developer Lock": 99918479.076418,
     "Operational Reserve": 149877718.614627,
