@@ -2,7 +2,7 @@ name: Update MOJ Supply JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 毎時0分に実行
+    - cron: '0 * * * *'  # Run every hour on the hour
   workflow_dispatch:
 
 permissions:
