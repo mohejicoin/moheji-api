@@ -1,13 +1,13 @@
 {
   "mint": "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump",
   "initial_supply": 1000000000.0,
-  "current_supply": 999184790.758662,
-  "burned": 815209.241338,
+  "current_supply": 999183790.758662,
+  "burned": 816209.241338,
   "allocations": {
-    "Developer Lock": 99918479.075866,
-    "Operational Reserve": 149877718.613799,
-    "Marketing and Partnerships": 99918479.075866,
-    "Ecosystem Rewards": 99918479.075866,
-    "Community": 549551634.917264
+    "Developer Lock": 99918379.075866,
+    "Operational Reserve": 149877568.613799,
+    "Marketing and Partnerships": 99918379.075866,
+    "Ecosystem Rewards": 99918379.075866,
+    "Community": 549551084.917264
   }
 }
