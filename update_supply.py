@@ -33,11 +33,11 @@ burned = round(INITIAL_SUPPLY - current_supply, 6)
 
 # Percentage setting (recalculated as 100% excluding burned)
 ratios = {
-    "Developer Lock": 0.10,
-    "Operational Reserve": 0.15,
-    "Marketing and Partnerships": 0.10,
-    "Ecosystem Rewards": 0.10,
-    "Community": 0.55  # All the rest
+    "Developer Lock": 0.0025,
+    "Operational Reserve": 0.0025,
+    "Marketing and Partnerships": 0.0025,
+    "Ecosystem Rewards": 0.0025,
+    "Community": 0.99 # All the rest
 }
 
 # Check that the percentages sum to 1.0
