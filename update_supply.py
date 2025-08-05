@@ -9,10 +9,10 @@ getcontext().prec = 40
 
 load_dotenv()
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
-MINT = "HJwToCxFFmtnYGZMQa7rZwHAMG2evdbdXAbbQr1Jpump"
+MINT = "DnbwSGgtnC1YdruuATd56A9tig4RWxCVkDqhMMN3bonk"
 
-# 初期供給（1B）を Decimal で
-INITIAL_SUPPLY = Decimal("1000000000")
+# 初期供給を Decimal で
+INITIAL_SUPPLY = Decimal("11111111")
 
 if not HELIUS_API_KEY:
     raise Exception("❌ HELIUS_API_KEY is not set.")
