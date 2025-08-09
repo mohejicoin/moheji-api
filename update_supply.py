@@ -9,7 +9,7 @@ getcontext().prec = 40
 
 load_dotenv()
 HELIUS_API_KEY = os.getenv("HELIUS_API_KEY")
-MINT = "CA"
+MINT = "DnbwSGgtnC1YdruuATd56A9tig4RWxCVkDqhMMN3bonk"
 
 # 初期供給を Decimal で
 INITIAL_SUPPLY = Decimal("11111111")
