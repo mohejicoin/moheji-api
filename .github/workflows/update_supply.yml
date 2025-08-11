@@ -1,4 +1,4 @@
-name: Update MOJ Supply JSON
+name: Update moj Supply JSON
 
 on:
   schedule:
