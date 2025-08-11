@@ -1,2 +1,2 @@
 # moheji-api
-API service for real-time MOJ token supply data using Solscan API
+API service for real-time moj token supply data using Solscan API
